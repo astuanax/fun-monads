@@ -1,22 +1,84 @@
+/**
+ * Class `None<A>` represents non-existent values of type `A`.
+ *
+ * ```typescript
+ * const s: None<any> = new None<any>()
+ * const t: None<any> = Option.none
+ * const u: None<any> = Option(null)
+ * const v: None<any> = Option(undefined)
+ * const w: None<any> = Option.some(null)
+ * const x: None<any> = Option.some(undefined)
+ * const y: None<any> = Option.apply(null)
+ * const z: None<any> = Option.apply(undefined)
+ * ```
+ */
 var None = /** @class */ (function () {
     function None() {
-        this.type = "None";
+        this.type = 'None';
+        /**
+         * isEmpty is a convenience shortcut to {@link isNone}
+         */
         this.isEmpty = this.isNone;
+        /**
+         * isSome is a convenience shortcut to {@link isSome}
+         */
         this.isDefined = this.isSome;
         this.exists = this.has;
     }
+    /**
+     * Returns true if the option is None, false otherwise.
+     */
     None.prototype.isNone = function () {
         return true;
     };
+    /**
+     * Returns true if the option is an instance of Some, false otherwise.
+     */
     None.prototype.isSome = function () {
         return false;
     };
+    /**
+     * get throws an Error if this is a None
+     */
     None.prototype.get = function () {
         throw new Error('Unsupported operation None.get');
     };
+    /** Returns a Some containing the result of applying $f to this $option's
+     * value if this $option is nonempty.
+     * Otherwise return $none.
+     *
+     *  ```typescript
+     *  const f = (x:number): number => x * 2;
+     *  const o = Option<number>(5)
+     *  const result = o.map(f).getOrElse(-1) // 10
+     *  ```
+     *
+     *  @note This is similar to `flatMap` except here,
+     *  $f does not need to wrap its result in an $option.
+     *
+     *  @see {@link flatMap}
+     *  @see {@link forEach}
+     */
     None.prototype.map = function (f) {
         return new None();
     };
+    /** Returns the result of applying $f to this Option's value if
+     * this Option is nonempty.
+     * Returns None if this Option is empty.
+     * Slightly different from `map` in that $f is expected to
+     * return an Option (which could be None).
+     *
+     *  ```typescript
+     *  const f = (x:number) => Option(undefined);
+     *  const o = Option<number>(5)
+     *  const result = o.flatMap(f).getOrElse(-1) // -1
+     *  ```
+     *
+     *  @param  f   the function to apply
+     *  @return Returns None in all cases
+     *  @see {@link map}
+     *  @see {@link forEach}
+     */
     None.prototype.flatMap = function (f) {
         return new None();
     };
@@ -46,6 +108,19 @@ var None = /** @class */ (function () {
     };
     return None;
 }());
+/**
+ * Class `Some<A>` represents existing values of type `A`.
+ * Some never contains null or undefined.
+ *
+ * ```typescript
+ * const a:any = "anything"
+ * const b: Some<any> = new Some<any>(a)
+ * const c: Some<any> = Option.some(a)
+ * const d: Some<any> = Option(a)
+ * const e: Some<any> = Option.some(a)
+ * const f: Some<any> = Option.apply(a)
+ * ```
+ */
 var Some = /** @class */ (function () {
     function Some(value) {
         this.type = 'Some';

@@ -12,7 +12,7 @@
   "author": "astuanax <len.dierickx@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/astuanax/fun-monads"
   },
   "license": "MIT",
   "engines": {

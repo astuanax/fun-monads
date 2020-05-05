@@ -1,27 +1,90 @@
 'use strict'
 
+/**
+ * Class `None<A>` represents non-existent values of type `A`.
+ *
+ * ```typescript
+ * const s: None<any> = new None<any>()
+ * const t: None<any> = Option.none
+ * const u: None<any> = Option(null)
+ * const v: None<any> = Option(undefined)
+ * const w: None<any> = Option.some(null)
+ * const x: None<any> = Option.some(undefined)
+ * const y: None<any> = Option.apply(null)
+ * const z: None<any> = Option.apply(undefined)
+ * ```
+ */
 export class None<A> {
-  readonly type: string = "None"
+  readonly type: string = 'None'
 
+  /**
+   * Returns true if the option is None, false otherwise.
+   */
   isNone(): boolean {
     return true
   }
 
+  /**
+   * Returns true if the option is an instance of Some, false otherwise.
+   */
   isSome(): boolean {
     return false
   }
 
+  /**
+   * isEmpty is a convenience shortcut to {@link isNone}
+   */
   isEmpty = this.isNone
+
+  /**
+   * isSome is a convenience shortcut to {@link isSome}
+   */
   isDefined = this.isSome
 
+  /**
+   * get throws an Error if this is a None
+   */
   get(): A {
     throw new Error('Unsupported operation None.get')
   }
 
+  /** Returns a Some containing the result of applying $f to this $option's
+   * value if this $option is nonempty.
+   * Otherwise return $none.
+   *
+   *  ```typescript
+   *  const f = (x:number): number => x * 2;
+   *  const o = Option<number>(5)
+   *  const result = o.map(f).getOrElse(-1) // 10
+   *  ```
+   *
+   *  @note This is similar to `flatMap` except here,
+   *  $f does not need to wrap its result in an $option.
+   *
+   *  @see {@link flatMap}
+   *  @see {@link forEach}
+   */
   map<B>(f: (a: A) => B): Option<B> {
     return new None<B>()
   }
 
+  /** Returns the result of applying $f to this Option's value if
+   * this Option is nonempty.
+   * Returns None if this Option is empty.
+   * Slightly different from `map` in that $f is expected to
+   * return an Option (which could be None).
+   *
+   *  ```typescript
+   *  const f = (x:number) => Option(undefined);
+   *  const o = Option<number>(5)
+   *  const result = o.flatMap(f).getOrElse(-1) // -1
+   *  ```
+   *
+   *  @param  f   the function to apply
+   *  @return Returns None in all cases
+   *  @see {@link map}
+   *  @see {@link forEach}
+   */
   flatMap<B>(f: (a: A) => Option<B>): Option<B> {
     return new None<B>()
   }
@@ -62,6 +125,20 @@ export class None<A> {
 
 }
 
+
+/**
+ * Class `Some<A>` represents existing values of type `A`.
+ * Some never contains null or undefined.
+ *
+ * ```typescript
+ * const a:any = "anything"
+ * const b: Some<any> = new Some<any>(a)
+ * const c: Some<any> = Option.some(a)
+ * const d: Some<any> = Option(a)
+ * const e: Some<any> = Option.some(a)
+ * const f: Some<any> = Option.apply(a)
+ * ```
+ */
 export class Some<A> {
   readonly type: string = 'Some'
   readonly value: A
@@ -89,7 +166,7 @@ export class Some<A> {
     return this.value
   }
 
-  map<B>(f: (a:A) => B): Option<B> {
+  map<B>(f: (a: A) => B): Option<B> {
     const res = f(this.value)
     return res == null
       ? new None<B>()
@@ -105,7 +182,7 @@ export class Some<A> {
   }
 
   flatten(): Option<A> {
-    if(this.value instanceof Option) {
+    if (this.value instanceof Option) {
       return this.value as unknown as Option<A>
     } else {
       return this
@@ -120,23 +197,23 @@ export class Some<A> {
     return [this.get()]
   }
 
-  ap<B>(fa: Option<(a:A) => B>): Option<B> {
+  ap<B>(fa: Option<(a: A) => B>): Option<B> {
     return this.map<B>(fa.get())
   }
 
-  filter(p: (a:A) => boolean): Option<A> {
+  filter(p: (a: A) => boolean): Option<A> {
     return p(this.get())
       ? this
       : new None<A>()
   }
 
-  has(p: (a:A) => boolean): boolean {
+  has(p: (a: A) => boolean): boolean {
     return p(this.get())
   }
 
   exists = this.has
 
-  forEach(fn: (a:A) => any): void {
+  forEach(fn: (a: A) => any): void {
     fn(this.get())
   }
 }
@@ -173,19 +250,19 @@ export namespace Option {
   export const isEmpty = isNone
   export const isDefined = isSome
 
-  export function get<A>(a:Option<A>): A {
+  export function get<A>(a: Option<A>): A {
     return a.get()
   }
 
-  export function map<A, B>(f: (x:A) => B, a: Option<A>): Option<B> {
+  export function map<A, B>(f: (x: A) => B, a: Option<A>): Option<B> {
     return a.map(f)
   }
 
-  export function flatMap<A, B>(f: (x:A) => Option<B>, a: Option<A>): Option<B> {
+  export function flatMap<A, B>(f: (x: A) => Option<B>, a: Option<A>): Option<B> {
     return a.flatMap(f)
   }
 
-  export function getOrElse<A>(x:A, a:Option<A>): A {
+  export function getOrElse<A>(x: A, a: Option<A>): A {
     return a.getOrElse(x)
   }
 
@@ -193,21 +270,21 @@ export namespace Option {
     return a.getOrElse(new None<A>())
   }
 
-  export function ap<A, B>(f: Option<(a:A) => B>, a: Option<A>): Option<B> {
+  export function ap<A, B>(f: Option<(a: A) => B>, a: Option<A>): Option<B> {
     return a.ap(f)
   }
 
-  export function filter<A>(p: (a:A) => boolean, a: Option<A>): Option<A> {
+  export function filter<A>(p: (a: A) => boolean, a: Option<A>): Option<A> {
     return a.filter(p)
   }
 
-  export function has<A>(p: (a:A) => boolean, a: Option<A>): boolean {
+  export function has<A>(p: (a: A) => boolean, a: Option<A>): boolean {
     return a.has(p)
   }
 
   export const exists = has
 
-  export function forEach<A>(f: (a:A) => any, a: Option<A>): void {
+  export function forEach<A>(f: (a: A) => any, a: Option<A>): void {
     a.forEach(f)
   }
 
