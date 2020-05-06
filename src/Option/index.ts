@@ -93,8 +93,8 @@ export class None<A> {
     return x
   }
 
-  flatten(): Option<A> {
-    return new None<A>()
+  flatten<B>(): Option<B> {
+    return new None<B>()
   }
 
   orElse<B>(b: Option<B>): Option<A> | Option<B> {
@@ -181,11 +181,11 @@ export class Some<A> {
     return this.get()
   }
 
-  flatten(): Option<A> {
+  flatten<B>(): Option<B> {
     if (this.value instanceof Option) {
-      return this.value as unknown as Option<A>
+      return this.value as unknown as Option<B>
     } else {
-      return this
+      return this as unknown as Option<B>
     }
   }
 

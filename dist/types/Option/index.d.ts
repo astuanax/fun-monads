@@ -70,7 +70,7 @@ export declare class None<A> {
      */
     flatMap<B>(f: (a: A) => Option<B>): Option<B>;
     getOrElse(x: A): A;
-    flatten(): Option<A>;
+    flatten<B>(): Option<B>;
     orElse<B>(b: Option<B>): Option<A> | Option<B>;
     toList(): A[];
     ap<B>(fa: Option<(a: A) => B>): Option<B>;
@@ -104,7 +104,7 @@ export declare class Some<A> {
     map<B>(f: (a: A) => B): Option<B>;
     flatMap<B>(f: (x: A) => Option<B>): Option<B>;
     getOrElse(x: A): A;
-    flatten(): Option<A>;
+    flatten<B>(): Option<B>;
     orElse<B>(b: Option<B>): Option<A> | Option<B>;
     toList(): A[];
     ap<B>(fa: Option<(a: A) => B>): Option<B>;
