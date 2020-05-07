@@ -1,22 +1,19 @@
 'use strict'
 
-import { Option } from '../Option'
-
 export class Success<A> {
   readonly type: string = 'Success'
   readonly value: A
+  isSuccess: boolean = true
+  isFailure: boolean = false
 
   constructor(value: A) {
     this.value = value
     return this
   }
 
-  isSuccess: boolean = true
-  isFailure: boolean = false
-
   flatMap<B>(f: (x: A) => Try<B>): Try<B> {
     try {
-      return f(this.value as A)
+      return f(this.value)
     } catch (err) {
       return new Failure<B>(err)
     }
@@ -43,8 +40,8 @@ export class Success<A> {
   }
 
   flatten(): Try<A> {
-    if ((this.value as unknown as Try<A>).isSuccess) {
-      return this.get() as unknown as Try<A>
+    if (((this.value as unknown) as Try<A>).isSuccess) {
+      return (this.get() as unknown) as Try<A>
     }
     return this
   }
@@ -64,7 +61,7 @@ export class Success<A> {
   }
 
   recover<B>(pf: (x: Error) => Try<B>): Try<B> {
-    return new Success<B>(this.value as unknown as B)
+    return new Success<B>((this.value as unknown) as B)
   }
 
   failed(): Try<A> | Try<Error> {
@@ -74,20 +71,18 @@ export class Success<A> {
   ap<B>(fa: Try<(a: A) => B>): Try<B> {
     return this.map<B>(fa.get())
   }
-
 }
 
 export class Failure<A> {
   readonly type: string = 'Failure'
   readonly value: Error
+  isSuccess: boolean = false
+  isFailure: boolean = true
 
   constructor(value: Error) {
     this.value = value
     return this
   }
-
-  isSuccess: boolean = false
-  isFailure: boolean = true
 
   flatMap<B>(f: (x: A) => Try<B>): Try<B> {
     return new Failure<B>(this.value)
@@ -144,7 +139,6 @@ export class Failure<A> {
   ap<B>(fa: Try<(a: A) => B>): Try<B> {
     return new Failure<B>(this.value)
   }
-
 }
 
 export type Try<A> = Success<A> | Failure<A>
@@ -182,7 +176,7 @@ export namespace Try {
     return a.flatMap(f)
   }
 
-  export function map<A, B>(f: (x: A) => B,  a: Try<A>): Try<B> {
+  export function map<A, B>(f: (x: A) => B, a: Try<A>): Try<B> {
     return a.map(f)
   }
 
@@ -225,7 +219,4 @@ export namespace Try {
   export function ap<A, B>(f: Try<(a: A) => B>, a: Try<A>): Try<B> {
     return a.ap(f)
   }
-
 }
-
-

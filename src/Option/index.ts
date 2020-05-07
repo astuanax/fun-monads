@@ -20,16 +20,12 @@ export class None<A> {
   /**
    * Returns true if the option is None, false otherwise.
    */
-  isNone(): boolean {
-    return true
-  }
+  isNone: boolean = true
 
   /**
    * Returns true if the option is an instance of Some, false otherwise.
    */
-  isSome(): boolean {
-    return false
-  }
+  isSome: boolean = false
 
   /**
    * isEmpty is a convenience shortcut to {@link isNone}
@@ -40,6 +36,7 @@ export class None<A> {
    * isSome is a convenience shortcut to {@link isSome}
    */
   isDefined = this.isSome
+  exists = this.has
 
   /**
    * get throws an Error if this is a None
@@ -93,8 +90,8 @@ export class None<A> {
     return x
   }
 
-  flatten<B>(): Option<B> {
-    return new None<B>()
+  flatten(): Option<A> {
+    return this
   }
 
   orElse<B>(b: Option<B>): Option<A> | Option<B> {
@@ -117,14 +114,10 @@ export class None<A> {
     return false
   }
 
-  exists = this.has
-
   forEach(fn: (a: A) => any): void {
     // noop
   }
-
 }
-
 
 /**
  * Class `Some<A>` represents existing values of type `A`.
@@ -142,6 +135,11 @@ export class None<A> {
 export class Some<A> {
   readonly type: string = 'Some'
   readonly value: A
+  isNone: boolean = false
+  isSome: boolean = true
+  isEmpty = this.isNone
+  isDefined = this.isSome
+  exists = this.has
 
   constructor(value: A) {
     this.value = value
@@ -151,26 +149,13 @@ export class Some<A> {
     return this
   }
 
-  isNone(): boolean {
-    return false
-  }
-
-  isSome(): boolean {
-    return true
-  }
-
-  isEmpty = this.isNone
-  isDefined = this.isSome
-
   get(): A {
     return this.value
   }
 
   map<B>(f: (a: A) => B): Option<B> {
     const res = f(this.value)
-    return res == null
-      ? new None<B>()
-      : new Some<B>(res)
+    return res == null ? new None<B>() : new Some<B>(res)
   }
 
   flatMap<B>(f: (x: A) => Option<B>): Option<B> {
@@ -181,12 +166,12 @@ export class Some<A> {
     return this.get()
   }
 
-  flatten<B>(): Option<B> {
-    if (this.value instanceof Option) {
-      return this.value as unknown as Option<B>
-    } else {
-      return this as unknown as Option<B>
+  flatten(): Option<A> {
+    const v: Option<A> = (this.value as unknown) as Option<A>
+    if (v && (v.isSome || v.isNone)) {
+      return v
     }
+    return this
   }
 
   orElse<B>(b: Option<B>): Option<A> | Option<B> {
@@ -202,16 +187,12 @@ export class Some<A> {
   }
 
   filter(p: (a: A) => boolean): Option<A> {
-    return p(this.get())
-      ? this
-      : new None<A>()
+    return p(this.get()) ? this : new None<A>()
   }
 
   has(p: (a: A) => boolean): boolean {
     return p(this.get())
   }
-
-  exists = this.has
 
   forEach(fn: (a: A) => any): void {
     fn(this.get())
@@ -224,6 +205,7 @@ export function Option<A>(value: A): Option<A> {
   return Option.apply(value)
 }
 
+/* istanbul ignore next */
 export namespace Option {
   export function none<A>(): Option<A> {
     return new None<A>()
@@ -240,11 +222,11 @@ export namespace Option {
   }
 
   export function isSome<A>(fa: Option<A>): boolean {
-    return fa.isSome()
+    return fa.isSome
   }
 
   export function isNone<A>(fa: Option<A>): boolean {
-    return fa.isNone()
+    return fa.isNone
   }
 
   export const isEmpty = isNone
@@ -266,8 +248,8 @@ export namespace Option {
     return a.getOrElse(x)
   }
 
-  export function flatten<A>(a: Option<Option<A>>): Option<A> {
-    return a.getOrElse(new None<A>())
+  export function flatten<A>(a: Option<A>): Option<A> {
+    return a.flatten()
   }
 
   export function ap<A, B>(f: Option<(a: A) => B>, a: Option<A>): Option<B> {
@@ -284,16 +266,11 @@ export namespace Option {
 
   export const exists = has
 
-  export function forEach<A>(f: (a: A) => any, a: Option<A>): void {
+  export function forEach<A>(f: (a: A) => void, a: Option<A>): void {
     a.forEach(f)
   }
 
   export function orElse<A, B>(b: Option<B>, a: Option<A>): Option<A> | Option<B> {
     return a.orElse(b)
   }
-
 }
-
-
-
-

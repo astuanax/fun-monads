@@ -18,6 +18,14 @@ var None = /** @class */ (function () {
     function None() {
         this.type = 'None';
         /**
+         * Returns true if the option is None, false otherwise.
+         */
+        this.isNone = true;
+        /**
+         * Returns true if the option is an instance of Some, false otherwise.
+         */
+        this.isSome = false;
+        /**
          * isEmpty is a convenience shortcut to {@link isNone}
          */
         this.isEmpty = this.isNone;
@@ -27,18 +35,6 @@ var None = /** @class */ (function () {
         this.isDefined = this.isSome;
         this.exists = this.has;
     }
-    /**
-     * Returns true if the option is None, false otherwise.
-     */
-    None.prototype.isNone = function () {
-        return true;
-    };
-    /**
-     * Returns true if the option is an instance of Some, false otherwise.
-     */
-    None.prototype.isSome = function () {
-        return false;
-    };
     /**
      * get throws an Error if this is a None
      */
@@ -88,7 +84,7 @@ var None = /** @class */ (function () {
         return x;
     };
     None.prototype.flatten = function () {
-        return new None();
+        return this; //new None<A>()
     };
     None.prototype.orElse = function (b) {
         return b;
@@ -127,6 +123,8 @@ exports.None = None;
 var Some = /** @class */ (function () {
     function Some(value) {
         this.type = 'Some';
+        this.isNone = false;
+        this.isSome = true;
         this.isEmpty = this.isNone;
         this.isDefined = this.isSome;
         this.exists = this.has;
@@ -136,12 +134,6 @@ var Some = /** @class */ (function () {
         }
         return this;
     }
-    Some.prototype.isNone = function () {
-        return false;
-    };
-    Some.prototype.isSome = function () {
-        return true;
-    };
     Some.prototype.get = function () {
         return this.value;
     };
@@ -158,12 +150,11 @@ var Some = /** @class */ (function () {
         return this.get();
     };
     Some.prototype.flatten = function () {
-        if (this.value instanceof Option) {
-            return this.value;
+        var v = this.value;
+        if (v && (v.isSome || v.isNone)) {
+            return v;
         }
-        else {
-            return this;
-        }
+        return this;
     };
     Some.prototype.orElse = function (b) {
         return this;
@@ -192,6 +183,7 @@ function Option(value) {
     return Option.apply(value);
 }
 exports.Option = Option;
+/* istanbul ignore next */
 (function (Option) {
     function none() {
         return new None();
@@ -207,11 +199,11 @@ exports.Option = Option;
     }
     Option.apply = apply;
     function isSome(fa) {
-        return fa.isSome();
+        return fa.isSome;
     }
     Option.isSome = isSome;
     function isNone(fa) {
-        return fa.isNone();
+        return fa.isNone;
     }
     Option.isNone = isNone;
     Option.isEmpty = isNone;
@@ -233,7 +225,7 @@ exports.Option = Option;
     }
     Option.getOrElse = getOrElse;
     function flatten(a) {
-        return a.getOrElse(new None());
+        return a.flatten();
     }
     Option.flatten = flatten;
     function ap(f, a) {
