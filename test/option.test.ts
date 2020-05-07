@@ -30,14 +30,7 @@ describe('Option', function () {
       expect(a.type).toEqual('Some')
     },
   );
-
-  test.each(fixturesSome)(
-    'Get some value',
-    (a) => {
-      expect(v).toEqual(v)
-    },
-  );
-
+  
   test.each(fixturesNone)(
     'Get none %#',
     (a) => {
