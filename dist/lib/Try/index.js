@@ -33,8 +33,9 @@ var Success = /** @class */ (function () {
         return this;
     };
     Success.prototype.flatten = function () {
-        if (this.value.isSuccess) {
-            return this.get();
+        var v = this.value;
+        if (v && (v.isSuccess || v.isFailure)) {
+            return v;
         }
         return this;
     };
@@ -87,12 +88,7 @@ var Failure = /** @class */ (function () {
         return b();
     };
     Failure.prototype.orElse = function (b) {
-        try {
-            return b;
-        }
-        catch (err) {
-            return new Failure(err);
-        }
+        return b;
     };
     Failure.prototype.flatten = function () {
         return this;
@@ -124,6 +120,7 @@ function Try(value) {
     return Try.apply(value);
 }
 exports.Try = Try;
+/* istanbul ignore next */
 (function (Try) {
     function success(value) {
         return new Success(value);

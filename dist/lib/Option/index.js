@@ -84,7 +84,7 @@ var None = /** @class */ (function () {
         return x;
     };
     None.prototype.flatten = function () {
-        return this; //new None<A>()
+        return this;
     };
     None.prototype.orElse = function (b) {
         return b;
@@ -139,9 +139,7 @@ var Some = /** @class */ (function () {
     };
     Some.prototype.map = function (f) {
         var res = f(this.value);
-        return res == null
-            ? new None()
-            : new Some(res);
+        return res == null ? new None() : new Some(res);
     };
     Some.prototype.flatMap = function (f) {
         return f(this.value);
@@ -166,9 +164,7 @@ var Some = /** @class */ (function () {
         return this.map(fa.get());
     };
     Some.prototype.filter = function (p) {
-        return p(this.get())
-            ? this
-            : new None();
+        return p(this.get()) ? this : new None();
     };
     Some.prototype.has = function (p) {
         return p(this.get());

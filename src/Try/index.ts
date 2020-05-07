@@ -40,8 +40,9 @@ export class Success<A> {
   }
 
   flatten(): Try<A> {
-    if (((this.value as unknown) as Try<A>).isSuccess) {
-      return (this.get() as unknown) as Try<A>
+    const v: Try<A> = (this.value as unknown) as Try<A>
+    if (v && (v.isSuccess || v.isFailure)) {
+      return v
     }
     return this
   }
@@ -105,11 +106,7 @@ export class Failure<A> {
   }
 
   orElse<B>(b: Try<B>): Try<A> | Try<B> {
-    try {
-      return b
-    } catch (err) {
-      return new Failure<B>(err)
-    }
+    return b
   }
 
   flatten(): Try<A> {
@@ -147,6 +144,7 @@ export function Try<A>(value: () => A): Try<A> {
   return Try.apply(value)
 }
 
+/* istanbul ignore next */
 export namespace Try {
   export function success<A>(value: A): Try<A> {
     return new Success<A>(value)

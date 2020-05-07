@@ -88,7 +88,7 @@
           return x;
       };
       None.prototype.flatten = function () {
-          return this; //new None<A>()
+          return this;
       };
       None.prototype.orElse = function (b) {
           return b;
@@ -142,9 +142,7 @@
       };
       Some.prototype.map = function (f) {
           var res = f(this.value);
-          return res == null
-              ? new None()
-              : new Some(res);
+          return res == null ? new None() : new Some(res);
       };
       Some.prototype.flatMap = function (f) {
           return f(this.value);
@@ -169,9 +167,7 @@
           return this.map(fa.get());
       };
       Some.prototype.filter = function (p) {
-          return p(this.get())
-              ? this
-              : new None();
+          return p(this.get()) ? this : new None();
       };
       Some.prototype.has = function (p) {
           return p(this.get());
@@ -285,8 +281,9 @@
           return this;
       };
       Success.prototype.flatten = function () {
-          if (this.value.isSuccess) {
-              return this.get();
+          var v = this.value;
+          if (v && (v.isSuccess || v.isFailure)) {
+              return v;
           }
           return this;
       };
@@ -338,12 +335,7 @@
           return b();
       };
       Failure.prototype.orElse = function (b) {
-          try {
-              return b;
-          }
-          catch (err) {
-              return new Failure(err);
-          }
+          return b;
       };
       Failure.prototype.flatten = function () {
           return this;
@@ -373,6 +365,7 @@
   function Try(value) {
       return Try.apply(value);
   }
+  /* istanbul ignore next */
   (function (Try) {
       function success(value) {
           return new Success(value);

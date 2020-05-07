@@ -30,6 +30,7 @@ export declare class None<A> {
      * isSome is a convenience shortcut to {@link isSome}
      */
     isDefined: boolean;
+    exists: (p: (a: A) => boolean) => boolean;
     /**
      * get throws an Error if this is a None
      */
@@ -76,7 +77,6 @@ export declare class None<A> {
     ap<B>(fa: Option<(a: A) => B>): Option<B>;
     filter(p: (a: A) => boolean): Option<A>;
     has(p: (a: A) => boolean): boolean;
-    exists: (p: (a: A) => boolean) => boolean;
     forEach(fn: (a: A) => any): void;
 }
 /**
@@ -95,11 +95,12 @@ export declare class None<A> {
 export declare class Some<A> {
     readonly type: string;
     readonly value: A;
-    constructor(value: A);
     isNone: boolean;
     isSome: boolean;
     isEmpty: boolean;
     isDefined: boolean;
+    exists: (p: (a: A) => boolean) => boolean;
+    constructor(value: A);
     get(): A;
     map<B>(f: (a: A) => B): Option<B>;
     flatMap<B>(f: (x: A) => Option<B>): Option<B>;
@@ -110,7 +111,6 @@ export declare class Some<A> {
     ap<B>(fa: Option<(a: A) => B>): Option<B>;
     filter(p: (a: A) => boolean): Option<A>;
     has(p: (a: A) => boolean): boolean;
-    exists: (p: (a: A) => boolean) => boolean;
     forEach(fn: (a: A) => any): void;
 }
 export declare type Option<A> = None<A> | Some<A>;

@@ -1,9 +1,9 @@
 export declare class Success<A> {
     readonly type: string;
     readonly value: A;
-    constructor(value: A);
     isSuccess: boolean;
     isFailure: boolean;
+    constructor(value: A);
     flatMap<B>(f: (x: A) => Try<B>): Try<B>;
     map<B>(f: (x: A) => B): Try<B>;
     fold<B>(f: (x: Error) => B, s: (x: A) => B): B;
@@ -20,9 +20,9 @@ export declare class Success<A> {
 export declare class Failure<A> {
     readonly type: string;
     readonly value: Error;
-    constructor(value: Error);
     isSuccess: boolean;
     isFailure: boolean;
+    constructor(value: Error);
     flatMap<B>(f: (x: A) => Try<B>): Try<B>;
     map<B>(f: (x: A) => B): Try<B>;
     fold<B>(f: (x: Error) => B, s: (x: A) => B): B;
