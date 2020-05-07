@@ -293,12 +293,10 @@
           return this;
       };
       Success.prototype.flatten = function () {
-          if (this.value instanceof Try) {
-              return this.value;
+          if (this.value.isSuccess) {
+              return this.get();
           }
-          else {
-              return this;
-          }
+          return this;
       };
       Success.prototype.forEach = function (fn) {
           fn(this.get());
@@ -314,10 +312,13 @@
           }
       };
       Success.prototype.recover = function (pf) {
-          return this;
+          return new Success(this.value);
       };
       Success.prototype.failed = function () {
           return new Failure(new Error('Unsupported operation. Success failed'));
+      };
+      Success.prototype.ap = function (fa) {
+          return this.map(fa.get());
       };
       return Success;
   }());
@@ -333,8 +334,7 @@
           return new Failure(this.value);
       };
       Failure.prototype.map = function (f) {
-          var _this = this;
-          return Try.apply(function () { return f(_this.value); });
+          return new Failure(this.value);
       };
       Failure.prototype.fold = function (f, s) {
           return f(this.value);
@@ -347,14 +347,14 @@
       };
       Failure.prototype.orElse = function (b) {
           try {
-              return b();
+              return b;
           }
           catch (err) {
               return new Failure(err);
           }
       };
       Failure.prototype.flatten = function () {
-          return new Failure(this.value);
+          return this;
       };
       Failure.prototype.forEach = function (fn) {
           // noop
@@ -372,6 +372,9 @@
       };
       Failure.prototype.failed = function () {
           return new Success(this.value);
+      };
+      Failure.prototype.ap = function (fa) {
+          return new Failure(this.value);
       };
       return Failure;
   }());
@@ -404,15 +407,15 @@
           return a.isFailure;
       }
       Try.isFailure = isFailure;
-      function flatMap(a, f) {
+      function flatMap(f, a) {
           return a.flatMap(f);
       }
       Try.flatMap = flatMap;
-      function map(a, f) {
+      function map(f, a) {
           return a.map(f);
       }
       Try.map = map;
-      function fold(a, f, s) {
+      function fold(f, s, a) {
           return a.fold(f, s);
       }
       Try.fold = fold;
@@ -420,11 +423,11 @@
           return a.get();
       }
       Try.get = get;
-      function getOrElse(a, b) {
+      function getOrElse(b, a) {
           return a.getOrElse(b);
       }
       Try.getOrElse = getOrElse;
-      function orElse(a, b) {
+      function orElse(b, a) {
           return a.orElse(b);
       }
       Try.orElse = orElse;
@@ -432,15 +435,15 @@
           return a.flatten();
       }
       Try.flatten = flatten;
-      function forEach(a, fn) {
+      function forEach(fn, a) {
           return a.forEach(fn);
       }
       Try.forEach = forEach;
-      function filter(a, p) {
+      function filter(p, a) {
           return a.filter(p);
       }
       Try.filter = filter;
-      function recover(a, pf) {
+      function recover(pf, a) {
           return a.recover(pf);
       }
       Try.recover = recover;
@@ -448,6 +451,10 @@
           return a.failed();
       }
       Try.failed = failed;
+      function ap(f, a) {
+          return a.ap(f);
+      }
+      Try.ap = ap;
   })(Try || (Try = {}));
 
   exports.Option = Option;
