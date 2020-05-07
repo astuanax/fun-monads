@@ -1,5 +1,7 @@
 'use strict'
 
+import { Option } from '../Option'
+
 export class Success<A> {
   readonly type: string = 'Success'
   readonly value: A
@@ -12,15 +14,15 @@ export class Success<A> {
   isSuccess: boolean = true
   isFailure: boolean = false
 
-  flatMap<B>(f: (x: A | Error) => Try<B>): Try<B> {
+  flatMap<B>(f: (x: A) => Try<B>): Try<B> {
     try {
-      return f(this.value)
+      return f(this.value as A)
     } catch (err) {
       return new Failure<B>(err)
     }
   }
 
-  map<B>(f: (x: A | Error) => B): Try<B> {
+  map<B>(f: (x: A) => B): Try<B> {
     return Try.apply(() => f(this.value))
   }
 
@@ -36,16 +38,15 @@ export class Success<A> {
     return this.value
   }
 
-  orElse<B>(b: () => Try<B>): Try<A> | Try<B> {
+  orElse<B>(b: Try<B>): Try<A> | Try<B> {
     return this
   }
 
-  flatten<B>(): Try<B> {
-    if (this.value instanceof Try) {
-      return this.value as unknown as Try<B>
-    } else {
-      return this as unknown as Try<B>
+  flatten(): Try<A> {
+    if ((this.value as unknown as Try<A>).isSuccess) {
+      return this.get() as unknown as Try<A>
     }
+    return this
   }
 
   forEach(fn: (a: A) => any): void {
@@ -62,12 +63,16 @@ export class Success<A> {
     }
   }
 
-  recover<B>(pf: (x: A | Error) => Try<B>): Try<A> | Try<B> {
-    return this
+  recover<B>(pf: (x: Error) => Try<B>): Try<B> {
+    return new Success<B>(this.value as unknown as B)
   }
 
-  failed(): Try<A> {
+  failed(): Try<A> | Try<Error> {
     return new Failure<A>(new Error('Unsupported operation. Success failed'))
+  }
+
+  ap<B>(fa: Try<(a: A) => B>): Try<B> {
+    return this.map<B>(fa.get())
   }
 
 }
@@ -84,12 +89,12 @@ export class Failure<A> {
   isSuccess: boolean = false
   isFailure: boolean = true
 
-  flatMap<B>(f: (x: A | Error) => Try<B>): Try<B> {
+  flatMap<B>(f: (x: A) => Try<B>): Try<B> {
     return new Failure<B>(this.value)
   }
 
-  map<B>(f: (x: A | Error) => B): Try<B> {
-    return Try.apply(() => f(this.value))
+  map<B>(f: (x: A) => B): Try<B> {
+    return new Failure<B>(this.value)
   }
 
   fold<B>(f: (x: Error) => B, s: (x: A) => B): B {
@@ -104,16 +109,16 @@ export class Failure<A> {
     return b()
   }
 
-  orElse<B>(b: () => Try<B>): Try<A> | Try<B> {
+  orElse<B>(b: Try<B>): Try<A> | Try<B> {
     try {
-      return b()
+      return b
     } catch (err) {
       return new Failure<B>(err)
     }
   }
 
-  flatten<B>(): Try<B> {
-    return new Failure<B>(this.value)
+  flatten(): Try<A> {
+    return this
   }
 
   forEach(fn: (a: A) => any): void {
@@ -124,17 +129,22 @@ export class Failure<A> {
     return this
   }
 
-  recover<B>(pf: (x: A | Error) => Try<B>): Try<A> | Try<B> {
+  recover<B>(pf: (x: Error) => Try<B>): Try<B> {
     try {
       return pf(this.value)
     } catch (err) {
-      return new Failure<A>(err)
+      return new Failure<B>(err)
     }
   }
 
-  failed(): Try<Error> {
+  failed(): Try<A> | Try<Error> {
     return new Success<Error>(this.value)
   }
+
+  ap<B>(fa: Try<(a: A) => B>): Try<B> {
+    return new Failure<B>(this.value)
+  }
+
 }
 
 export type Try<A> = Success<A> | Failure<A>
@@ -168,15 +178,15 @@ export namespace Try {
     return a.isFailure
   }
 
-  export function flatMap<A, B>(a: Try<A>, f: (x: A | Error) => Try<B>): Try<B> {
+  export function flatMap<A, B>(f: (x: A) => Try<B>, a: Try<A>): Try<B> {
     return a.flatMap(f)
   }
 
-  export function map<A, B>(a: Try<A>, f: (x: A | Error) => B): Try<B> {
+  export function map<A, B>(f: (x: A) => B,  a: Try<A>): Try<B> {
     return a.map(f)
   }
 
-  export function fold<A, B>(a: Try<A>, f: (x: Error) => B, s: (x: A) => B): B {
+  export function fold<A, B>(f: (x: Error) => B, s: (x: A) => B, a: Try<A>): B {
     return a.fold(f, s)
   }
 
@@ -184,33 +194,38 @@ export namespace Try {
     return a.get()
   }
 
-  export function getOrElse<A, B>(a: Try<A>, b: () => B): A | B {
+  export function getOrElse<A, B>(b: () => B, a: Try<A>): A | B {
     return a.getOrElse(b)
   }
 
-  export function orElse<A, B>(a: Try<A>, b: () => Try<B>): Try<A> | Try<B> {
+  export function orElse<A, B>(b: Try<B>, a: Try<A>): Try<A> | Try<B> {
     return a.orElse(b)
   }
 
-  export function flatten<A, B>(a: Try<A>): Try<B> {
+  export function flatten<A>(a: Try<A>): Try<A> {
     return a.flatten()
   }
 
-  export function forEach<A>(a: Try<A>, fn: (a: A) => any): void {
+  export function forEach<A>(fn: (a: A) => any, a: Try<A>): void {
     return a.forEach(fn)
   }
 
-  export function filter<A>(a: Try<A>, p: (a: A) => boolean): Try<A> {
+  export function filter<A>(p: (a: A) => boolean, a: Try<A>): Try<A> {
     return a.filter(p)
   }
 
-  export function recover<A, B>(a: Try<A>, pf: (x: A | Error) => Try<B>): Try<A> | Try<B> {
+  export function recover<A, B>(pf: (x: Error) => Try<B>, a: Try<A>): Try<B> {
     return a.recover(pf)
   }
 
   export function failed<A>(a: Try<A>): Try<A> | Try<Error> {
     return a.failed()
   }
+
+  export function ap<A, B>(f: Try<(a: A) => B>, a: Try<A>): Try<B> {
+    return a.ap(f)
+  }
+
 }
 
 
