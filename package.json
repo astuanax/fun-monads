@@ -70,7 +70,9 @@
     },
     "collectCoverageFrom": [
       "src/*.ts",
-      "src/**/*.ts"
+      "src/Reader/*.ts",
+      "src/Option/*.ts",
+      "src/Try/*.ts"
     ]
   },
   "prettier": {

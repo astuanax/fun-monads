@@ -4,4 +4,6 @@ var Option_1 = require("./Option");
 exports.Option = Option_1.Option;
 var Try_1 = require("./Try");
 exports.Try = Try_1.Try;
+var Reader_1 = require("./Reader");
+exports.Reader = Reader_1.Reader;
 //# sourceMappingURL=fun-monads.js.map
