@@ -1,0 +1,239 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>fun-monads</title>
+	<meta name="description" content="Documentation for fun-monads">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">fun-monads</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>fun-monads</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#fun-monads" id="fun-monads" style="color: inherit; text-decoration: none;">
+					<h1>fun-monads</h1>
+				</a>
+				<p>A monad library modelled after scala&#39;s monads.</p>
+				<p><a href="https://coveralls.io/github/astuanax/fun-monads?branch=master"><img src="https://coveralls.io/repos/github/astuanax/fun-monads/badge.svg?branch=master" alt="Coverage Status"></a></p>
+				<a href="#option" id="option" style="color: inherit; text-decoration: none;">
+					<h2>Option</h2>
+				</a>
+				<p>Use the of() or apply() function to create an option</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> o = Option.apply(<span class="hljs-number">1</span>)
+<span class="hljs-keyword">const</span> x = Option.of(userObj)</code></pre>
+				<p>The Option monad is not nullable and should never contain null or undefined.</p>
+				<p>Below examples will all return None </p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> s: None&lt;<span class="hljs-built_in">any</span>&gt; = <span class="hljs-keyword">new</span> None&lt;<span class="hljs-built_in">any</span>&gt;()
+<span class="hljs-keyword">const</span> t: None&lt;<span class="hljs-built_in">any</span>&gt; = Option.none
+<span class="hljs-keyword">const</span> u: None&lt;<span class="hljs-built_in">any</span>&gt; = Option(<span class="hljs-literal">null</span>)
+<span class="hljs-keyword">const</span> v: None&lt;<span class="hljs-built_in">any</span>&gt; = Option(<span class="hljs-literal">undefined</span>)
+<span class="hljs-keyword">const</span> w: None&lt;<span class="hljs-built_in">any</span>&gt; = Option.some(<span class="hljs-literal">null</span>)
+<span class="hljs-keyword">const</span> x: None&lt;<span class="hljs-built_in">any</span>&gt; = Option.some(<span class="hljs-literal">undefined</span>)
+<span class="hljs-keyword">const</span> y: None&lt;<span class="hljs-built_in">any</span>&gt; = Option.apply(<span class="hljs-literal">null</span>)
+<span class="hljs-keyword">const</span> z: None&lt;<span class="hljs-built_in">any</span>&gt; = Option.apply(<span class="hljs-literal">undefined</span>)</code></pre>
+				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+					<h3>Example</h3>
+				</a>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> user:Option&lt;User&gt; = db.GetUser(<span class="hljs-number">123456</span>)
+
+<span class="hljs-keyword">return</span> user
+  .filter(<span class="hljs-function"><span class="hljs-params">user</span> =&gt;</span> user.admin === <span class="hljs-literal">true</span>)
+  .map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> loadAdminData(x))
+  .getOrElse(<span class="hljs-string">"No admin data found"</span>)    </code></pre>
+				<a href="#either" id="either" style="color: inherit; text-decoration: none;">
+					<h2>Either</h2>
+				</a>
+				<p>The Either monad is right biased but has a left and right projection.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> user = Either.of(userObj)
+<span class="hljs-keyword">const</span> user = Either.apply(userObj)
+
+<span class="hljs-keyword">const</span> user = userObj.admin === <span class="hljs-literal">false</span> ? Left(userObj) : Right(userObj)</code></pre>
+				<a href="#example-1" id="example-1" style="color: inherit; text-decoration: none;">
+					<h3>Example</h3>
+				</a>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> user: Either&lt;User, Admin&gt; = userObj.admin === <span class="hljs-literal">false</span>
+  ? Left(userObj) 
+  : Right(userObj)
+
+user.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> loadAdminData(x))
+  .fold(<span class="hljs-function"><span class="hljs-params">u</span> =&gt;</span> getUser(u), <span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> =&gt; getAdmin(a))  </code></pre>
+				<a href="#reader" id="reader" style="color: inherit; text-decoration: none;">
+					<h2>Reader</h2>
+				</a>
+				<p>The Reader monad can be used for dependency injection</p>
+				<p>Use the of() and apply() function to create a new Reader</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> r = Reader.of(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> <span class="hljs-number">2</span>*x)
+<span class="hljs-keyword">const</span> db = Reader.of(<span class="hljs-function"><span class="hljs-params">db</span> =&gt;</span> db.getType())</code></pre>
+				<a href="#example-2" id="example-2" style="color: inherit; text-decoration: none;">
+					<h3>Example</h3>
+				</a>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> getUser: Reader&lt;User, Db&gt; = <span class="hljs-function"><span class="hljs-params">userId</span> =&gt;</span> Reader.apply(<span class="hljs-function"><span class="hljs-params">db</span> =&gt;</span> db.getUser(userId))
+
+<span class="hljs-keyword">const</span> john = getUser(<span class="hljs-number">1</span>)
+<span class="hljs-keyword">const</span> adam = getUser(<span class="hljs-number">5</span>)
+
+john.run(couchbaseDb)
+adam.run(postgresDb)</code></pre>
+				<a href="#try" id="try" style="color: inherit; text-decoration: none;">
+					<h2>Try</h2>
+				</a>
+				<p>The Try monad is right/success biased. </p>
+				<p>Try catch monad, use of() and or apply() function</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> r = Try.apply(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> getDb())
+<span class="hljs-keyword">const</span> db = Try.apply(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> getFile(<span class="hljs-string">"/path/to/file"</span>))</code></pre>
+				<a href="#example-3" id="example-3" style="color: inherit; text-decoration: none;">
+					<h3>Example</h3>
+				</a>
+				<pre><code class="language-typescript"><span class="hljs-keyword">const</span> getUser: Reader&lt;User, Try&lt;DB&gt;&gt; = <span class="hljs-function"><span class="hljs-params">userId</span> =&gt;</span> Reader.apply(<span class="hljs-function"><span class="hljs-params">db</span> =&gt;</span> Try(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> db.getUser(userId)))
+<span class="hljs-keyword">const</span> user: Try&lt;User&gt; = getUser(<span class="hljs-number">123</span>).run(couchbaseDb)
+
+user.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> getUserInfo(x))
+  .fold(<span class="hljs-function"><span class="hljs-params">err</span>=&gt;</span> logAndUiError(err), <span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> renderUser(s))  </code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-namespace tsd-has-type-parameter">
+						<a href="modules/either.html">Either</a>
+					</li>
+					<li class=" tsd-kind-namespace tsd-has-type-parameter">
+						<a href="modules/option.html">Option</a>
+					</li>
+					<li class=" tsd-kind-namespace tsd-has-type-parameter">
+						<a href="modules/reader.html">Reader</a>
+					</li>
+					<li class=" tsd-kind-namespace tsd-has-type-parameter">
+						<a href="modules/try.html">Try</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/failure.html" class="tsd-kind-icon">Failure</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/leftm.html" class="tsd-kind-icon">LeftM</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/none.html" class="tsd-kind-icon">None</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/readerm.html" class="tsd-kind-icon">ReaderM</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/rightm.html" class="tsd-kind-icon">RightM</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/some.html" class="tsd-kind-icon">Some</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/success.html" class="tsd-kind-icon">Success</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#either" class="tsd-kind-icon">Either</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#left" class="tsd-kind-icon">Left</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#option" class="tsd-kind-icon">Option</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#reader" class="tsd-kind-icon">Reader</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#right" class="tsd-kind-icon">Right</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#try" class="tsd-kind-icon">Try</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#left" class="tsd-kind-icon">Left</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#right" class="tsd-kind-icon">Right</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
