@@ -1,6 +1,8 @@
 'use strict'
 
-export class ReaderM<A, Config extends any> {
+import Functor from '../Functor'
+
+export class ReaderM<A, Config extends any> implements Functor<A, any, Reader<A, Config>> {
   readonly type: string = 'Reader'
   readonly value: (a: Config) => A
 
@@ -42,6 +44,10 @@ export function Reader<A, Config>(value: (a: Config) => A): ReaderM<A, Config> {
 
 /* istanbul ignore next */
 export namespace Reader {
+  export function of<A>(value: A): ReaderM<A, undefined> {
+    return new ReaderM<A, undefined>(() => value)
+  }
+
   export function apply<A, Config>(fn: (a: Config) => A): ReaderM<A, Config> {
     return new ReaderM<A, Config>(fn)
   }

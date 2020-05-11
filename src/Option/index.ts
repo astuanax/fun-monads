@@ -1,4 +1,5 @@
 'use strict'
+import Functor from '../Functor'
 
 /**
  * Class `None<A>` represents non-existent values of type `A`.
@@ -14,7 +15,7 @@
  * const z: None<any> = Option.apply(undefined)
  * ```
  */
-export class None<A> {
+export class None<A> implements Functor<A, any, Option<A>> {
   readonly type: string = 'None'
 
   /**
@@ -132,7 +133,7 @@ export class None<A> {
  * const f: Some<any> = Option.apply(a)
  * ```
  */
-export class Some<A> {
+export class Some<A> implements Functor<A, any, Option<A>> {
   readonly type: string = 'Some'
   readonly value: A
   isNone: boolean = false
@@ -218,6 +219,10 @@ export namespace Option {
   }
 
   export function apply<A>(a: A): Option<A> {
+    return some(a)
+  }
+
+  export function of<A>(a: A): Option<A> {
     return some(a)
   }
 

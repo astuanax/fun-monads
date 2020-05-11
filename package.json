@@ -72,7 +72,8 @@
       "src/*.ts",
       "src/Reader/*.ts",
       "src/Option/*.ts",
-      "src/Try/*.ts"
+      "src/Try/*.ts",
+      "src/Either/*.ts"
     ]
   },
   "prettier": {

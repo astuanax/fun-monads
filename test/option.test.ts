@@ -1,4 +1,4 @@
-import { Option } from '../src/fun-monads'
+import { Option } from '../src/Option'
 import { None, Some } from '../src/Option'
 
 const v = 1
@@ -321,9 +321,5 @@ describe('Option', function() {
   test('None<A> is not None<B> 2', () => {
     const a = Option.none<any>()
     expect(a.isSome).toBeFalsy()
-  })
-
-  test('Namespace test Option', () => {
-    expect
   })
 })

@@ -1,4 +1,4 @@
-import { Reader } from '../src/fun-monads'
+import { Reader } from '../src/Reader'
 
 const v = (x: any): any => x
 
@@ -28,7 +28,7 @@ describe('Reader', function() {
     const x = v
 
     // partial function
-    const c = a.map((x: any) => (y: any = x) => y)
+    const c = a.map((x: any) => (y: any) => y)
 
     // value
     const b = Reader((x: any) => 1)
@@ -40,7 +40,7 @@ describe('Reader', function() {
 
   test('Applicative laws: identity', () => {
     const y = 'string'
-    const a = Reader((x: any) => (y: any = x) => 'a ' + y)
+    const a = Reader((x: any) => (y: any) => 'a ' + y)
     const b = Reader((x: any) => y)
 
     expect(Reader.ap(a, b).get(undefined)).toEqual('a ' + y)

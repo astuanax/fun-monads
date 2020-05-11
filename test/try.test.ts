@@ -1,4 +1,4 @@
-import { Try } from '../src/fun-monads'
+import { Try } from '../src/Try'
 import { Failure, Success } from '../src/Try'
 
 const err = new Error('Divide by zero')
@@ -69,7 +69,7 @@ describe('Try', function() {
   })
 
   test('Applicative laws: composition', () => {
-    const compose = (a: any) => (b: any) => (c: any) => a(b(c))
+    const compose = () => (a: any) => (b: any) => (c: any) => a(b(c))
     const fn = (x: string): string => x + 'a'
     const u = Try(() => fn)
     const v = Try(() => fn)
@@ -79,16 +79,7 @@ describe('Try', function() {
 
     const expected = monad.ap(u, monad.ap(v, w))
     expect(expected.get()).toEqual('aaa')
-    const actual = monad.ap(
-      monad.ap(
-        monad.ap(
-          monad(() => compose),
-          u
-        ),
-        v
-      ),
-      w
-    )
+    const actual = monad.ap(monad.ap(monad.ap(monad(compose), u), v), w)
     expect(expected.get()).toEqual(actual.get())
   })
 
