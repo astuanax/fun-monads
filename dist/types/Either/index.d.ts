@@ -40,6 +40,7 @@ export declare class LeftM<A, B> implements Functor<A, B, Either<A, B>> {
     filter: any;
     swap(): Either<B, A>;
 }
+export declare function Either<A, B>(value: B): Either<A, B>;
 export declare function Right<A, B>(value: B): Either<A, B>;
 export declare function Left<A, B>(value: A): Either<A, B>;
 export declare type Left<A, B> = LeftM<A, B>;

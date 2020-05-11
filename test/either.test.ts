@@ -1,7 +1,7 @@
 import { Option, Either, Left, Right } from '../src/fun-monads'
 const v = 1
 
-const fixturesRight: Either<any, any>[] = [Right(v), Either.apply(v)]
+const fixturesRight: Either<any, any>[] = [Right(v), Either.apply(v), Either(v)]
 
 const fixturesLeft: Either<any, any>[] = [Left(v)]
 

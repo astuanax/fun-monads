@@ -70,16 +70,16 @@
        * Slightly different from `map` in that $f is expected to
        * return an Option (which could be None).
        *
-       *  ```typescript
-       *  const f = (x:number) => Option(undefined);
-       *  const o = Option<number>(5)
-       *  const result = o.flatMap(f).getOrElse(-1) // -1
-       *  ```
+       * ```typescript
+       * const f = (x:number) => Option(undefined);
+       * const o = Option<number>(5)
+       * const result = o.flatMap(f).getOrElse(-1) // -1
+       * ```
        *
-       *  @param  f   the function to apply
-       *  @return Returns None in all cases
-       *  @see {@link map}
-       *  @see {@link forEach}
+       * @param  f   the function to apply
+       * @return Returns None in all cases
+       * @see {@link map}
+       * @see {@link forEach}
        */
       None.prototype.flatMap = function (f) {
           return new None();
@@ -522,6 +522,9 @@
       Reader.zip = zip;
   })(Reader || (Reader = {}));
 
+  /**
+   * @ignore
+   */
   var leftProjection = function (that) { return ({
       get: function () {
           if (that.isLeft) {
@@ -587,6 +590,9 @@
       isRight: that.isRight,
       isLeft: that.isLeft
   }); };
+  /**
+   * @ignore
+   */
   var rightProjection = function (that) { return ({
       get: function () {
           if (that.isRight) {
@@ -702,8 +708,11 @@
       };
       return LeftM;
   }());
+  function Either(value) {
+      return Right(value);
+  }
   function Right(value) {
-      return exports.Either.apply(value);
+      return Either.apply(value);
   }
   function Left(value) {
       return new LeftM(value);
@@ -761,13 +770,14 @@
           return e.filter(p);
       }
       Either.filter = filter;
-  })(exports.Either || (exports.Either = {}));
+  })(Either || (Either = {}));
 
   exports.Option = Option;
   exports.Some = Some;
   exports.None = None;
   exports.Try = Try;
   exports.Reader = Reader;
+  exports.Either = Either;
   exports.Left = Left;
   exports.Right = Right;
 

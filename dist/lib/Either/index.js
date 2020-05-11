@@ -1,6 +1,9 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 var Option_1 = require("../Option");
+/**
+ * @ignore
+ */
 var leftProjection = function (that) { return ({
     get: function () {
         if (that.isLeft) {
@@ -66,6 +69,9 @@ var leftProjection = function (that) { return ({
     isRight: that.isRight,
     isLeft: that.isLeft
 }); };
+/**
+ * @ignore
+ */
 var rightProjection = function (that) { return ({
     get: function () {
         if (that.isRight) {
@@ -183,6 +189,10 @@ var LeftM = /** @class */ (function () {
     return LeftM;
 }());
 exports.LeftM = LeftM;
+function Either(value) {
+    return Right(value);
+}
+exports.Either = Either;
 function Right(value) {
     return Either.apply(value);
 }
@@ -191,7 +201,6 @@ function Left(value) {
     return new LeftM(value);
 }
 exports.Left = Left;
-var Either;
 (function (Either) {
     function apply(value) {
         return new RightM(value);

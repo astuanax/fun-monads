@@ -66,16 +66,16 @@ var None = /** @class */ (function () {
      * Slightly different from `map` in that $f is expected to
      * return an Option (which could be None).
      *
-     *  ```typescript
-     *  const f = (x:number) => Option(undefined);
-     *  const o = Option<number>(5)
-     *  const result = o.flatMap(f).getOrElse(-1) // -1
-     *  ```
+     * ```typescript
+     * const f = (x:number) => Option(undefined);
+     * const o = Option<number>(5)
+     * const result = o.flatMap(f).getOrElse(-1) // -1
+     * ```
      *
-     *  @param  f   the function to apply
-     *  @return Returns None in all cases
-     *  @see {@link map}
-     *  @see {@link forEach}
+     * @param  f   the function to apply
+     * @return Returns None in all cases
+     * @see {@link map}
+     * @see {@link forEach}
      */
     None.prototype.flatMap = function (f) {
         return new None();

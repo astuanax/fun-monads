@@ -2,6 +2,9 @@
 import { Option } from '../Option'
 import Functor from '../Functor'
 
+/**
+ * @ignore
+ */
 const leftProjection = <A, B>(that: Either<A, B>) => ({
   get: () => {
     if (that.isLeft) {
@@ -67,6 +70,9 @@ const leftProjection = <A, B>(that: Either<A, B>) => ({
   isLeft: that.isLeft
 })
 
+/**
+ * @ignore
+ */
 const rightProjection = <A, B>(that: Either<A, B>) => ({
   get: () => {
     if (that.isRight) {
@@ -192,6 +198,14 @@ export class LeftM<A, B> implements Functor<A, B, Either<A, B>> {
   }
 }
 
+export type Left<A, B> = LeftM<A, B>
+export type Right<A, B> = RightM<A, B>
+export type Either<A, B> = Left<A, B> | Right<A, B>
+
+export function Either<A, B>(value: B): Either<A, B> {
+  return Right<A, B>(value)
+}
+
 export function Right<A, B>(value: B): Either<A, B> {
   return Either.apply<A, B>(value)
 }
@@ -199,10 +213,6 @@ export function Right<A, B>(value: B): Either<A, B> {
 export function Left<A, B>(value: A): Either<A, B> {
   return new LeftM<A, B>(value)
 }
-
-export type Left<A, B> = LeftM<A, B>
-export type Right<A, B> = RightM<A, B>
-export type Either<A, B> = Left<A, B> | Right<A, B>
 
 export namespace Either {
   export function apply<A, B>(value: B): Either<A, B> {
